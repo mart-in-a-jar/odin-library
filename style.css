@@ -1,0 +1,63 @@
+html {
+    box-sizing: border-box;
+    font-size: 16px;
+}
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header,
+.container {
+    max-width: 40%;
+    margin: auto;
+}
+
+button.add {
+    padding: 15px 15px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+td, th {
+    border: 1px solid rgb(190,190,190);
+    padding: 10px 20px;
+    text-align: left;
+  }
+
+col.title,
+col.author {
+    min-width: 300px;
+}
+
+col.pages {
+    min-width: 100px;
+}
+
+th:nth-child(3),
+td:nth-child(3) {
+    text-align: right;
+}
+
+table caption {
+    text-align: left;
+    padding: 10px 0px;
+    font-size: 1.1rem;
+}
+
+.main {
+    padding: 50px 0px;
+    display: flex;
+    justify-content: center;
+}
