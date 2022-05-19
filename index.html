@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +12,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="img/favicon/favicon-16x16.png">
     <link rel="manifest" href="img/favicon/site.webmanifest">
 </head>
+
 <body>
     <header>
         <h1>Library</h1>
@@ -39,5 +41,35 @@
             </tr>
         </table>
     </div>
+    <div class="form modal active">
+        <h1>Add book</h1>
+        <form class="add-book">
+            <div class="form-row">
+                <label for="title">Title</label>
+                <input id="title" type="text" required>
+            </div>
+            <div class="form-row">
+                <label for="author">Author</label>
+                <input id="author" type="text" required>
+            </div>
+            <div class="form-row">
+                <label for="pages">Pages</label>
+                <input type="tel" id="pages" pattern="\d+" required>
+            </div>
+            <div class="form-row center">
+                <label for="read">I have read this book</label>
+                <input type="checkbox" id="read" name="read" value="true">
+            </div>
+            <div class="form-row center">
+                <button type="submit">Add</button>
+            </div>
+        </form>
+    </div>
+    <div class="blur active">
+    </div>
 </body>
+
 </html>
+
+<!-- Click book in table to open a card with info and option to delete
+Searching in books -->
