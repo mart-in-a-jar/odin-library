@@ -26,6 +26,10 @@ button {
     cursor: pointer;
 }
 
+button.add span {
+    text-decoration: underline;
+}
+
 table {
     border-collapse: collapse;
 }
@@ -34,7 +38,20 @@ td, th {
     border: 1px solid rgb(190,190,190);
     padding: 10px 20px;
     text-align: left;
-  }
+}
+
+tr:not(:first-child):hover {
+    cursor: pointer;
+    background-color: rgba(207, 220, 235, 0.219);
+}
+
+td:last-child:hover {
+    cursor: default;
+}
+
+table td:last-child {
+    text-align: center;
+}
 
 col.title,
 col.author {
@@ -59,7 +76,8 @@ table caption {
 .main {
     padding: 50px 0px;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    gap: 25px;
 }
 
 .modal {
@@ -88,7 +106,7 @@ table caption {
 input[type="text"],
 input[type="tel"] {
     height: 35px;
-    padding: 0px 10px;
+    text-indent: 10px;  
     border-radius: 5px;
     border: 1px solid rgba(0, 0, 0, 0.158);
 }
@@ -128,4 +146,10 @@ form button {
     background-color: rgb(180, 241, 138);
     padding: 15px 100px;
     margin-top: 15px;
+}
+
+input[type="search"] {
+    width: 50%;
+    height: 30px;
+    align-self: center;
 }

@@ -16,9 +16,10 @@
 <body>
     <header>
         <h1>Library</h1>
-        <button class="add" type="button">Add book</button>
+        <button class="add" type="button"><span>A</span>dd book</button>
     </header>
     <div class="main container">
+        <input type="search" placeholder="Search">
         <table class="library">
             <caption>Books</caption>
             <colgroup>
@@ -33,28 +34,22 @@
                 <th># of pages</th>
                 <th>Read?</th>
             </tr>
-            <tr>
-                <td>13</td>
-                <td>13</td>
-                <td>13</td>
-                <td>13</td>
-            </tr>
         </table>
     </div>
-    <div class="form modal active">
+    <div class="form modal">
         <h1>Add book</h1>
         <form class="add-book" autocomplete="off">
             <div class="form-row">
                 <label for="title">Title</label>
-                <input id="title" type="text" required>
+                <input id="title" type="text" required maxlength="100">
             </div>
             <div class="form-row">
                 <label for="author">Author</label>
-                <input id="author" type="text" required>
+                <input id="author" type="text" required maxlength="50">
             </div>
             <div class="form-row">
                 <label for="pages">Pages</label>
-                <input type="tel" id="pages" pattern="\d+" required>
+                <input type="tel" id="pages" pattern="\d+" required  maxlength="4">
             </div>
             <div class="form-row center">
                 <label for="read">I have read this book</label>
@@ -65,7 +60,7 @@
             </div>
         </form>
     </div>
-    <div class="blur active">
+    <div class="blur">
     </div>
 </body>
 
