@@ -113,6 +113,7 @@ window.addEventListener("keyup", e => {
             if (e.key === "Escape") {
                 searchField.blur();
                 searchField.value = "";
+                showAllRows();
             }
         }
     }
@@ -232,26 +233,25 @@ document.querySelector(".book.modal #readOnCard").addEventListener("change", () 
     putLocal();
 });
 
+searchField.addEventListener("keyup", () => {
+    searchString = searchField.value.toLowerCase();
+    document.querySelectorAll("table.library tr:not(tr:first-of-type)").forEach(row => {
+        let display;
+        row.querySelectorAll("td:nth-child(-n+2)").forEach(cell => {
+            if (cell.textContent.toLowerCase().indexOf(searchString) >= 0) {
+                display = true;
+            }
+        });
+        if (display) {
+            row.style.display = "";
+        } else {
+            row.style.display = "none";
+        }
+    });
+});
 
-
-
-/*
-function myFunction() {
- 204   │   var input, filter, table, tr, td, i, txtValue;
- 205   │   input = document.getElementById("sok");
- 206   │   filter = input.value.toUpperCase();
- 207   │   table = document.getElementById("devices");
- 208   │   tr = table.getElementsByTagName("tr");
- 209   │   for (i = 0; i < tr.length; i++) {
- 210   │     td = tr[i].getElementsByTagName("td")[1];
- 211   │     if (td) {
- 212   │       txtValue = td.textContent || td.innerText;
- 213   │       if (txtValue.toUpperCase().indexOf(filter) > -1) {
- 214   │         tr[i].style.display = "";
- 215   │       } else {
- 216   │         tr[i].style.display = "none";
- 217   │       }
- 218   │     }
- 219   │   }
- 220   │ }
- */
+function showAllRows() {
+    document.querySelectorAll("tr").forEach(row => {
+        row.style.display = "";
+    });
+}
