@@ -125,7 +125,6 @@ function writeTable() {
     for (let book in library) {
         writeTableRow(library[book]);
     }
-    addTableActions();
 }
 
 function updateTable(book) {
@@ -159,7 +158,7 @@ function writeTableRow(book) {
         tableRow.appendChild(cell);
     });
     table.appendChild(tableRow);
-    addTableActions();
+    addTableActions(readCell, titleCell, authorCell, pagesCell);
 }
 
 function putLocal() {
@@ -184,25 +183,18 @@ document.querySelector("button.deleteConfirm").addEventListener("click", () => {
     }
 });
 
-function addTableActions() {
-    // To remove existing eventlisteners so to not get multiple events on same element
-    // document.querySelectorAll("table.library td").forEach(item => {
-    //     item.replaceWith(item.cloneNode(true));
-    // });
-
+function addTableActions(read, title, author, pages) {
     // Will have to disable pointer events on checkbox itself to prevent double clicks
-    document.querySelectorAll("table.library td:last-of-type").forEach(item => {
-        item.addEventListener("click", (e) => {
-            library[e.target.dataset.libraryIndex].toggleRead();
-            const checkBox = document.querySelector(`table.library td:last-of-type 
+    read.addEventListener("click", (e) => {
+        library[e.target.dataset.libraryIndex].toggleRead();
+        const checkBox = document.querySelector(`table.library td:last-of-type 
         input[type="checkbox"][data-library-index="${e.target.dataset.libraryIndex}"]`);
-            checkBox.checked = !checkBox.checked;
-            putLocal();
-        });
+        checkBox.checked = !checkBox.checked;
+        putLocal();
     });
 
-    document.querySelectorAll("tr:not(tr:first-of-type) td:not(td:last-of-type)").forEach(row => {
-        row.addEventListener("click", (e) => {
+    [title, author, pages].forEach(cell => {
+        cell.addEventListener("click", (e) => {
             currentBook = library[e.target.dataset.libraryIndex];
             currentBookIndex = library.indexOf(currentBook)
             updateBookCard(currentBook);
@@ -217,7 +209,7 @@ function updateBookCard(book) {
     const pages = document.querySelector(".book.modal span.pages");
     const read = document.querySelector(".book.modal #readOnCard");
     title.textContent = book.title;
-    author.textContent = book.author;
+    author.textContent = `by ${book.author}`;
     pages.textContent = book.pages;
 
     if (book.read) {
@@ -239,3 +231,27 @@ document.querySelector(".book.modal #readOnCard").addEventListener("change", () 
     tableCheckbox.checked = !tableCheckbox.checked;
     putLocal();
 });
+
+
+
+
+/*
+function myFunction() {
+ 204   │   var input, filter, table, tr, td, i, txtValue;
+ 205   │   input = document.getElementById("sok");
+ 206   │   filter = input.value.toUpperCase();
+ 207   │   table = document.getElementById("devices");
+ 208   │   tr = table.getElementsByTagName("tr");
+ 209   │   for (i = 0; i < tr.length; i++) {
+ 210   │     td = tr[i].getElementsByTagName("td")[1];
+ 211   │     if (td) {
+ 212   │       txtValue = td.textContent || td.innerText;
+ 213   │       if (txtValue.toUpperCase().indexOf(filter) > -1) {
+ 214   │         tr[i].style.display = "";
+ 215   │       } else {
+ 216   │         tr[i].style.display = "none";
+ 217   │       }
+ 218   │     }
+ 219   │   }
+ 220   │ }
+ */
