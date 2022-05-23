@@ -153,3 +153,44 @@ input[type="search"] {
     height: 30px;
     align-self: center;
 }
+
+.delete.modal {
+    display: grid;
+    gap: 10px;
+}
+
+/* To prevent double click since whole td is a toggle*/
+table input[type="checkbox"] {
+    pointer-events: none;
+}
+
+.book.modal * {
+    background-color: #fff;
+    margin: 0;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.book.modal span {
+    padding: 0;
+}
+
+.book.modal {
+    width: 400px;
+    display: grid;
+    gap: 15px;
+    grid-template: repeat(3, 1fr) / 2fr 1fr; 
+    grid-auto-flow: column;
+}
+
+button.delete,
+button.deleteConfirm,
+button#deleteOnCard {
+    background-color: rgba(179, 2, 2, 0.555);
+    color: white;
+    align-self: flex-end;
+}
+
+button#deleteOnCard:hover {
+    outline: 2px solid black;
+}

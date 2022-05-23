@@ -1,10 +1,25 @@
-const library = JSON.parse(localStorage.getItem("library"));
+const library = [];
 const table = document.querySelector("table.library tbody");
 const addBookModal = document.querySelector(".form.modal");
+const deleteModal = document.querySelector(".delete.modal");
+const bookCardModal = document.querySelector(".book.modal");
 const blurred = document.querySelector(".blur");
 const addBookButton = document.querySelector("header button.add");
 const searchField = document.querySelector("input[type='search'");
+let currentBook;
+let currentBookIndex;
 
+// Import from localstorage
+function importBooks() {
+    const books = JSON.parse(localStorage.getItem("library"));
+    if (books) {
+        books.map(book => {
+            library.push(new Book(book.title, book.author, book.pages, book.read));
+        });
+    }
+}
+
+importBooks();
 writeTable();
 
 function Book(title, author, pages, read) {
@@ -14,31 +29,43 @@ function Book(title, author, pages, read) {
     this.read = read;
 }
 
-Book.prototype.toggleRead = function() {
+Book.prototype.toggleRead = function () {
     if (this.read) {
         this.read = false;
     } else this.read = true;
 }
 
-function showModal() {
-    addBookModal.classList.add("active");
+function showModal(modal) {
+    modal.classList.add("active");
     blurred.classList.add("active");
-    document.querySelector("form input:first-of-type").focus();
+    if (modal === addBookModal) {
+        document.querySelector("form input:first-of-type").focus();
+    } else if (modal === deleteModal) {
+        document.querySelector("input#deleteConfirm").focus();
+    }
 }
 
 function hideModal() {
-    addBookModal.classList.remove("active");
+    if (addBookModal.classList.contains("active")) {
+        addBookModal.classList.remove("active");
+        clearForm();
+        document.querySelectorAll("form input").forEach(input => {
+            input.blur();
+        });
+    } else if (deleteModal.classList.contains("active")) {
+        deleteModal.classList.remove("active");
+        document.querySelector("input#deleteConfirm").value = "";
+        document.querySelector("input#deleteConfirm").blur();
+    } else if (bookCardModal.classList.contains("active")) {
+        bookCardModal.classList.remove("active");
+    };
     blurred.classList.remove("active");
-    clearForm();
-    document.querySelectorAll("form input").forEach(input => {
-        input.blur();
-    });
 }
 
 function addBookToLibrary() {
     const title = document.querySelector("#title").value;
     const author = document.querySelector("#author").value;
-    const pages = document.querySelector("#pages").value;
+    const pages = +document.querySelector("#pages").value;
     const read = document.querySelector("#read").checked;
 
     const newBook = new Book(title, author, pages, read);
@@ -57,12 +84,12 @@ document.querySelector("form.add-book").addEventListener("submit", (e) => {
     e.preventDefault();
     addBookToLibrary();
     updateTable(library.length - 1);
-    hideModal();
+    hideModal(addBookModal);
     clearForm();
 });
 
 addBookButton.addEventListener("click", () => {
-    showModal();
+    showModal(addBookModal);
 });
 
 blurred.addEventListener("click", () => {
@@ -74,11 +101,11 @@ window.addEventListener("keyup", e => {
         if (e.key === "Escape") {
             hideModal();
         }
-    // Press "a" to add new book or "s" to search
+        // Press "a" to add new book or "s" to search
     } else {
         if (!(searchField === document.activeElement) && !(e.ctrlKey || e.shiftKey)) {
             if (e.key.toLowerCase() === "a") {
-            showModal();
+                showModal(addBookModal);
             } else if (e.key.toLowerCase() === "s") {
                 searchField.focus();
             }
@@ -92,9 +119,13 @@ window.addEventListener("keyup", e => {
 });
 
 function writeTable() {
-    for(let book in library) {
+    document.querySelectorAll("table tr:not(tr:first-of-type)").forEach(row => {
+        row.remove();
+    });
+    for (let book in library) {
         writeTableRow(library[book]);
     }
+    addTableActions();
 }
 
 function updateTable(book) {
@@ -109,8 +140,9 @@ function writeTableRow(book) {
     const readCell = document.createElement("td");
     const readCheck = document.createElement("input");
     readCheck.type = "checkbox";
-    readCheck.dataset.libraryIndex = library.indexOf(book);
-    readCell.dataset.libraryIndex = library.indexOf(book);
+    [readCheck, readCell, tableRow].forEach(item => {
+        item.dataset.libraryIndex = library.indexOf(book);
+    });
 
     titleCell.textContent = book.title;
     authorCell.textContent = book.author;
@@ -127,15 +159,83 @@ function writeTableRow(book) {
         tableRow.appendChild(cell);
     });
     table.appendChild(tableRow);
+    addTableActions();
 }
 
 function putLocal() {
     localStorage.setItem("library", JSON.stringify(library));
 }
 
+// Delete all books
+function deleteAll() {
+    library.length = 0;
+    writeTable();
+    putLocal();
+}
 
-/*
-    queryselectorall on checkboxes in table. change toggles library[data-id].toggleRead prototype
-    click book in table to view, delete etc.
-    save and load from localstorage
-*/
+document.querySelector("button.delete").addEventListener("click", () => {
+    showModal(deleteModal);
+});
+
+document.querySelector("button.deleteConfirm").addEventListener("click", () => {
+    if (document.querySelector("input#deleteConfirm").value === "DELETE") {
+        deleteAll();
+        hideModal();
+    }
+});
+
+function addTableActions() {
+    // To remove existing eventlisteners so to not get multiple events on same element
+    // document.querySelectorAll("table.library td").forEach(item => {
+    //     item.replaceWith(item.cloneNode(true));
+    // });
+
+    // Will have to disable pointer events on checkbox itself to prevent double clicks
+    document.querySelectorAll("table.library td:last-of-type").forEach(item => {
+        item.addEventListener("click", (e) => {
+            library[e.target.dataset.libraryIndex].toggleRead();
+            const checkBox = document.querySelector(`table.library td:last-of-type 
+        input[type="checkbox"][data-library-index="${e.target.dataset.libraryIndex}"]`);
+            checkBox.checked = !checkBox.checked;
+            putLocal();
+        });
+    });
+
+    document.querySelectorAll("tr:not(tr:first-of-type) td:not(td:last-of-type)").forEach(row => {
+        row.addEventListener("click", (e) => {
+            currentBook = library[e.target.dataset.libraryIndex];
+            currentBookIndex = library.indexOf(currentBook)
+            updateBookCard(currentBook);
+            showModal(bookCardModal);
+        });
+    });
+}
+
+function updateBookCard(book) {
+    const title = document.querySelector(".book.modal .title");
+    const author = document.querySelector(".book.modal .author");
+    const pages = document.querySelector(".book.modal span.pages");
+    const read = document.querySelector(".book.modal #readOnCard");
+    title.textContent = book.title;
+    author.textContent = book.author;
+    pages.textContent = book.pages;
+
+    if (book.read) {
+        read.checked = true;
+    } else read.checked = false;
+}
+
+document.querySelector("#deleteOnCard").addEventListener("click", () => {
+    library.splice(currentBookIndex, 1);
+    putLocal();
+    writeTable(); // So data-library-indexes updates correctly after array has changed
+    hideModal();
+});
+
+document.querySelector(".book.modal #readOnCard").addEventListener("change", () => {
+    currentBook.toggleRead();
+    const tableCheckbox = document.querySelector(`table.library td:last-of-type 
+    input[type="checkbox"][data-library-index="${currentBookIndex}"]`);
+    tableCheckbox.checked = !tableCheckbox.checked;
+    putLocal();
+});
