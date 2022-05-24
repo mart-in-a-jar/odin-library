@@ -96,6 +96,7 @@ blurred.addEventListener("click", () => {
     hideModal();
 });
 
+// Hotkeys
 window.addEventListener("keyup", e => {
     if (blurred.classList.contains("active")) {
         if (e.key === "Escape") {
@@ -185,11 +186,12 @@ document.querySelector("button.deleteConfirm").addEventListener("click", () => {
 });
 
 function addTableActions(read, title, author, pages) {
-    // Will have to disable pointer events on checkbox itself to prevent double clicks
+    // Will have to disable pointer events on checkbox itself to prevent double clicks (done in css)
     read.addEventListener("click", (e) => {
         library[e.target.dataset.libraryIndex].toggleRead();
-        const checkBox = document.querySelector(`table.library td:last-of-type 
-        input[type="checkbox"][data-library-index="${e.target.dataset.libraryIndex}"]`);
+        // const checkBox = document.querySelector(`table.library td:last-of-type 
+        // input[type="checkbox"][data-library-index="${e.target.dataset.libraryIndex}"]`);
+        const checkBox = read.querySelector("input");
         checkBox.checked = !checkBox.checked;
         putLocal();
     });
@@ -233,6 +235,8 @@ document.querySelector(".book.modal #readOnCard").addEventListener("change", () 
     putLocal();
 });
 
+
+// Search/filtering
 searchField.addEventListener("keyup", () => {
     searchString = searchField.value.toLowerCase();
     document.querySelectorAll("table.library tr:not(tr:first-of-type)").forEach(row => {
