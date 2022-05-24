@@ -35,7 +35,7 @@ table {
 }
 
 td, th {
-    border: 1px solid rgb(190,190,190);
+    border: 1px solid rgb(190,190,190, 0.18);
     padding: 10px 20px;
     text-align: left;
 }
