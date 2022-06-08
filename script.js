@@ -9,6 +9,18 @@ const searchField = document.querySelector("input[type='search'");
 let currentBook;
 let currentBookIndex;
 
+class Book {
+    constructor(title, author, pages, read) {
+        this.title = title;
+        this.author = author;
+        this.pages = pages;
+        this.read = read;
+    }
+    toggleRead() {
+        this.read = !this.read;
+    }
+}
+
 // Import from localstorage
 function importBooks() {
     const books = JSON.parse(localStorage.getItem("library"));
@@ -21,19 +33,6 @@ function importBooks() {
 
 importBooks();
 writeTable();
-
-function Book(title, author, pages, read) {
-    this.title = title;
-    this.author = author;
-    this.pages = pages;
-    this.read = read;
-}
-
-Book.prototype.toggleRead = function () {
-    if (this.read) {
-        this.read = false;
-    } else this.read = true;
-}
 
 function showModal(modal) {
     modal.classList.add("active");
@@ -141,7 +140,7 @@ function writeTableRow(book) {
     const readCell = document.createElement("td");
     const readCheck = document.createElement("input");
     readCheck.type = "checkbox";
-    [readCheck, readCell, tableRow].forEach(item => {
+    [readCheck, tableRow].forEach(item => {
         item.dataset.libraryIndex = library.indexOf(book);
     });
 
@@ -215,9 +214,7 @@ function updateBookCard(book) {
     author.textContent = `by ${book.author}`;
     pages.textContent = book.pages;
 
-    if (book.read) {
-        read.checked = true;
-    } else read.checked = false;
+    read.checked = book.read;
 }
 
 document.querySelector("#deleteOnCard").addEventListener("click", () => {
