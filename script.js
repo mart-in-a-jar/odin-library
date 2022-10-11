@@ -25,8 +25,10 @@ class Book {
 function importBooks() {
     const books = JSON.parse(localStorage.getItem("library"));
     if (books) {
-        books.map(book => {
-            library.push(new Book(book.title, book.author, book.pages, book.read));
+        books.map((book) => {
+            library.push(
+                new Book(book.title, book.author, book.pages, book.read)
+            );
         });
     }
 }
@@ -48,7 +50,7 @@ function hideModal() {
     if (addBookModal.classList.contains("active")) {
         addBookModal.classList.remove("active");
         clearForm();
-        document.querySelectorAll("form input").forEach(input => {
+        document.querySelectorAll("form input").forEach((input) => {
             input.blur();
         });
     } else if (deleteModal.classList.contains("active")) {
@@ -57,7 +59,7 @@ function hideModal() {
         document.querySelector("input#deleteConfirm").blur();
     } else if (bookCardModal.classList.contains("active")) {
         bookCardModal.classList.remove("active");
-    };
+    }
     blurred.classList.remove("active");
 }
 
@@ -73,9 +75,12 @@ function addBookToLibrary() {
 }
 
 function clearForm() {
-    document.querySelectorAll("form input:not([type='checkbox']").forEach(input => {
-        input.value = "";
-    });
+    document
+        .querySelectorAll("form input:not([type='checkbox']")
+        .forEach((input) => {
+            input.value = "";
+            input.classList.remove("is-used");
+        });
     document.querySelector("form input[type='checkbox']").checked = false;
 }
 
@@ -87,6 +92,16 @@ document.querySelector("form.add-book").addEventListener("submit", (e) => {
     clearForm();
 });
 
+const pagesInput = document.querySelector("#pages");
+pagesInput.addEventListener("input", () => {
+    pagesInput.classList.add("is-used");
+    if (pagesInput.validity.patternMismatch) {
+        pagesInput.setCustomValidity("Please use numbers only");
+    } else {
+        pagesInput.setCustomValidity("");
+    }
+});
+
 addBookButton.addEventListener("click", () => {
     showModal(addBookModal);
 });
@@ -96,14 +111,17 @@ blurred.addEventListener("click", () => {
 });
 
 // Hotkeys
-window.addEventListener("keyup", e => {
+window.addEventListener("keyup", (e) => {
     if (blurred.classList.contains("active")) {
         if (e.key === "Escape") {
             hideModal();
         }
         // Press "a" to add new book or "s" to search
     } else {
-        if (!(searchField === document.activeElement) && !(e.ctrlKey || e.shiftKey)) {
+        if (
+            !(searchField === document.activeElement) &&
+            !(e.ctrlKey || e.shiftKey)
+        ) {
             if (e.key.toLowerCase() === "a") {
                 showModal(addBookModal);
             } else if (e.key.toLowerCase() === "s") {
@@ -120,9 +138,11 @@ window.addEventListener("keyup", e => {
 });
 
 function writeTable() {
-    document.querySelectorAll("table tr:not(tr:first-of-type)").forEach(row => {
-        row.remove();
-    });
+    document
+        .querySelectorAll("table tr:not(tr:first-of-type)")
+        .forEach((row) => {
+            row.remove();
+        });
     for (let book in library) {
         writeTableRow(library[book]);
     }
@@ -140,7 +160,7 @@ function writeTableRow(book) {
     const readCell = document.createElement("td");
     const readCheck = document.createElement("input");
     readCheck.type = "checkbox";
-    [readCheck, tableRow].forEach(item => {
+    [readCheck, tableRow].forEach((item) => {
         item.dataset.libraryIndex = library.indexOf(book);
     });
 
@@ -153,8 +173,7 @@ function writeTableRow(book) {
         readCheck.checked = true;
     }
 
-
-    [titleCell, authorCell, pagesCell, readCell].forEach(cell => {
+    [titleCell, authorCell, pagesCell, readCell].forEach((cell) => {
         cell.dataset.libraryIndex = library.indexOf(book);
         tableRow.appendChild(cell);
     });
@@ -188,17 +207,17 @@ function addTableActions(read, title, author, pages) {
     // Will have to disable pointer events on checkbox itself to prevent double clicks (done in css)
     read.addEventListener("click", (e) => {
         library[e.target.dataset.libraryIndex].toggleRead();
-        // const checkBox = document.querySelector(`table.library td:last-of-type 
+        // const checkBox = document.querySelector(`table.library td:last-of-type
         // input[type="checkbox"][data-library-index="${e.target.dataset.libraryIndex}"]`);
         const checkBox = read.querySelector("input");
         checkBox.checked = !checkBox.checked;
         putLocal();
     });
 
-    [title, author, pages].forEach(cell => {
+    [title, author, pages].forEach((cell) => {
         cell.addEventListener("click", (e) => {
             currentBook = library[e.target.dataset.libraryIndex];
-            currentBookIndex = library.indexOf(currentBook)
+            currentBookIndex = library.indexOf(currentBook);
             updateBookCard(currentBook);
             showModal(bookCardModal);
         });
@@ -224,35 +243,39 @@ document.querySelector("#deleteOnCard").addEventListener("click", () => {
     hideModal();
 });
 
-document.querySelector(".book.modal #readOnCard").addEventListener("change", () => {
-    currentBook.toggleRead();
-    const tableCheckbox = document.querySelector(`table.library td:last-of-type 
+document
+    .querySelector(".book.modal #readOnCard")
+    .addEventListener("change", () => {
+        currentBook.toggleRead();
+        const tableCheckbox =
+            document.querySelector(`table.library td:last-of-type 
     input[type="checkbox"][data-library-index="${currentBookIndex}"]`);
-    tableCheckbox.checked = !tableCheckbox.checked;
-    putLocal();
-});
-
+        tableCheckbox.checked = !tableCheckbox.checked;
+        putLocal();
+    });
 
 // Search/filtering
 searchField.addEventListener("keyup", () => {
     searchString = searchField.value.toLowerCase();
-    document.querySelectorAll("table.library tr:not(tr:first-of-type)").forEach(row => {
-        let display;
-        row.querySelectorAll("td:nth-child(-n+2)").forEach(cell => {
-            if (cell.textContent.toLowerCase().indexOf(searchString) >= 0) {
-                display = true;
+    document
+        .querySelectorAll("table.library tr:not(tr:first-of-type)")
+        .forEach((row) => {
+            let display;
+            row.querySelectorAll("td:nth-child(-n+2)").forEach((cell) => {
+                if (cell.textContent.toLowerCase().indexOf(searchString) >= 0) {
+                    display = true;
+                }
+            });
+            if (display) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
             }
         });
-        if (display) {
-            row.style.display = "";
-        } else {
-            row.style.display = "none";
-        }
-    });
 });
 
 function showAllRows() {
-    document.querySelectorAll("tr").forEach(row => {
+    document.querySelectorAll("tr").forEach((row) => {
         row.style.display = "";
     });
 }
